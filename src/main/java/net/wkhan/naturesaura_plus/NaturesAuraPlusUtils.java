@@ -19,8 +19,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -286,9 +284,8 @@ public class NaturesAuraPlusUtils {
     }
 
     public static <T> T updateWoodStandMemoryIfRitual(Level level, BlockPos saplingPos, Supplier<T> originalCall, Predicate<T> grewSuccessfully) {
-        if (!(level instanceof ServerLevel))
+        if (level.getServer() == null || !level.getServer().isSameThread())
             return originalCall.get();
-
         ((MultiBlockUtil) Multiblocks.TREE_RITUAL).naturesaura_plus$allowAirInRitual(true);
         boolean isRitual = Multiblocks.TREE_RITUAL.isComplete(level, saplingPos);
         ((MultiBlockUtil) Multiblocks.TREE_RITUAL).naturesaura_plus$allowAirInRitual(false);
