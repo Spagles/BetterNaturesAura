@@ -16,9 +16,6 @@ import java.util.*;
 import static net.wkhan.naturesaura_plus.NaturesAuraPlusUtils.generateListFromEither;
 
 public final class AuraGenRules {
-
-    //todo: make a way to skip error messages for item/block ids that dont exist (and ideally somehow defined)
-
     public static final Map<EntityType<?>, Item> ProjectileValues = new HashMap<>();
 
     public record MossValues(Block deMossedBlock, int auraAmount) {}
@@ -99,8 +96,7 @@ public final class AuraGenRules {
 
         TagKey<EntityType<?>> projectileTag = rule.getProjectileTag();
         if (projectileTag != null) {
-                ForgeRegistries.ENTITY_TYPES.getValues().stream()
-                        .filter(e -> e.is(projectileTag))
+            ForgeRegistries.ENTITY_TYPES.tags().getTag(projectileTag)
                         .forEach(e -> {
                             NaturesAuraAPI.PROJECTILE_GENERATIONS.put(e, auraAmount);
                             ProjectileValues.put(e, rule.correspondingItem());
@@ -125,8 +121,7 @@ public final class AuraGenRules {
             return;
         }
 
-        ForgeRegistries.BLOCKS.getValues().stream()
-                .filter(b -> b.defaultBlockState().is(mossBlockTag))
+        ForgeRegistries.BLOCKS.tags().getTag(mossBlockTag)
                 .forEach(b -> MOSS_GENERATIONS.put(b, new MossValues(deMossedBlock, auraAmount)));
     }
     public static void addMossGenerations() {
@@ -148,8 +143,7 @@ public final class AuraGenRules {
             return;
         }
 
-        ForgeRegistries.BLOCKS.getValues().stream()
-                .filter(b -> b.defaultBlockState().is(flowerBlockTag))
+        ForgeRegistries.BLOCKS.tags().getTag(flowerBlockTag)
                 .forEach(b -> FLOWER_GENERATIONS.put(b, new FlowerValues(auraAmount, lucidity, obscurity, obscurityScale)));
     }
     public static void addFlowerGenerations() {
@@ -178,8 +172,7 @@ public final class AuraGenRules {
 
         TagKey<EntityType<?>> slimeTag = rule.getEntityTag();
         if (slimeTag != null) {
-            ForgeRegistries.ENTITY_TYPES.getValues().stream()
-                    .filter(e -> e.is(slimeTag))
+            ForgeRegistries.ENTITY_TYPES.tags().getTag(slimeTag)
                     .forEach(e -> SLIME_GENERATIONS.put(e,
                             new SlimeValues(auraAmount,slimeColor,minSizeForSlime,flatGenerationTimer,generationTimerModifier,
                                     sizeModifier,doSlimeSizeScaling,doEntityDropLoot,isFlatGenerationTimer))
@@ -214,8 +207,7 @@ public final class AuraGenRules {
 
         TagKey<EntityType<?>> animalTag = rule.getEntityTag();
         if (animalTag != null) {
-            ForgeRegistries.ENTITY_TYPES.getValues().stream()
-                    .filter(e -> e.is(animalTag))
+            ForgeRegistries.ENTITY_TYPES.tags().getTag(animalTag)
                     .forEach(e -> ANIMAL_GENERATIONS.put(e,
                             new AnimalValues(minimumTimeAliveForGenerationTime, maximumGenerationTime, timeAliveModifierForGenerationTime,
                                     minimumTimeAliveForAuraAmount, maximumAuraAmount, timeAliveModifierForAuraAmount , doEntityDropLoot,
