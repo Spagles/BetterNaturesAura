@@ -10,10 +10,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.wkhan.naturesaura_plus.NaturesAuraPlus;
+import net.wkhan.naturesaura_plus.data.OreSpawnRule;
 import net.wkhan.naturesaura_plus.data.auragen.*;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static net.wkhan.naturesaura_plus.data.OreSpawnRules.*;
 import static net.wkhan.naturesaura_plus.data.auragen.AuraGenRules.addAuraGenerations;
 import static net.wkhan.naturesaura_plus.data.config.MiscConfig.SHOW_AURA_GEN_RULES_IN_LOG;
+import static net.wkhan.naturesaura_plus.data.config.MiscConfig.SHOW_ORE_SPAWN_RULES_IN_LOG;
 import static org.apache.logging.log4j.LogManager.getLogger;
 
 public class ReloadListener extends SimpleJsonResourceReloadListener {
@@ -33,6 +35,7 @@ public class ReloadListener extends SimpleJsonResourceReloadListener {
 
     private static final Logger LOGGER = getLogger();
     protected static final List<String> loadedAuraRules = new ArrayList<>();
+    protected static final List<String> loadedOreRules = new ArrayList<>();
 
     @Override
     protected void apply(
@@ -140,11 +143,21 @@ public class ReloadListener extends SimpleJsonResourceReloadListener {
                                     AuraGenRules.addFireworkGeneration(rule);
                                 });
                     }
+                    case "powder_ore_spawn" -> {
+                        DataResult<OreSpawnRule> result = OreSpawnRule.CODEC.parse(JsonOps.INSTANCE, json)
+                                .mapError(originalError -> "Error in file '" + fileId + "': " + originalError);
+                        result.resultOrPartial(
+                                        errorMessage -> LOGGER.error("[NaturesAuraPlus] OreSpawn JSON Error: {}", errorMessage))
+                                .ifPresent(rule -> {
+                                    loadedOreRules.add(fileId.toString());
+                                    oreRulesQueue.add(rule);
+                                });
+                    }
 
                     default -> LOGGER.error("Unknown rule type '{}' in file: {}", type, fileId);
                 }
             }
-            catch (Exception e) { // I know this is sucky.
+            catch (Exception e) {
                 LOGGER.error("Failed to load interaction rule: {}", fileId);
             }
         });
@@ -154,6 +167,8 @@ public class ReloadListener extends SimpleJsonResourceReloadListener {
         LogCleaner.init();
         loadedAuraRules.clear();
         AuraGenRules.auraGenerationClear();
+        loadedOreRules.clear();
+        ORE_SPAWNS.clear();
     }
 
     @Mod.EventBusSubscriber(modid = NaturesAuraPlus.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -161,12 +176,15 @@ public class ReloadListener extends SimpleJsonResourceReloadListener {
 
         @SubscribeEvent
         public static void onTagsUpdated(TagsUpdatedEvent event) {
-            if (event.getPhase() != EventPriority.LOW)
-                return;
             addAuraGenerations();
-            System.out.println("Number of aura gen rules loaded: " + AuraGenRules.auraRulesCount());
+            LOGGER.info("Number of aura gen rules loaded: {}", AuraGenRules.auraRulesCount());
             if (SHOW_AURA_GEN_RULES_IN_LOG.get())
-                System.out.println("Aura generation rules loaded: " + loadedAuraRules);
+                LOGGER.info("Aura generation rules loaded: {}", loadedAuraRules);
+
+            addOreSpawns();
+            LOGGER.info("Number of ore spawn rules added: {}", ORE_SPAWNS.size());
+            if (SHOW_ORE_SPAWN_RULES_IN_LOG.get())
+                LOGGER.info("Ore spawn rules loaded: {}", ORE_SPAWNS);
         }
     }
 }

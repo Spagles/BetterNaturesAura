@@ -48,12 +48,46 @@ public class GameplayConfig {
             .defineInRange("furnaceBoosterAuraCost", 6500, 0, 1000000);
 
     public static final ForgeConfigSpec.BooleanValue CHECK_TAG_FOR_FURNACE_BOOST = BUILDER
-            .comment("Whether the furnace booster should check the input item in furnace against\n the tag #naturesaura_plus:valid_smeltable_to_boost to decide whether to double the smelted output or not (Default: false)")
-            .define("allow_all_for_furnace_boost", false);
+            .comment("Whether the furnace booster should check the input item in furnace against the tag #naturesaura_plus:valid_smeltable_to_boost,\n to decide whether to double the smelted output or not (Default: false)")
+            .define("allowAllForFurnaceBoost", false);
 
     public static final ForgeConfigSpec.IntValue FURNACE_BOOSTER_CHANCE = BUILDER
             .comment("The aura cost per recipe for the furnace booster block. (Default: 45)")
             .defineInRange("furnaceBoosterChance", 45, 0, 100);
+
+    public static final ForgeConfigSpec.BooleanValue CUBICAL_ORE_SPAWN = BUILDER
+            .comment("Whether the ore spawning from Powder of the Bountiful Core applies to a cubical range (else spherical range). (Default: true)")
+            .define("isOreEffectCubical", true);
+
+    public static final ForgeConfigSpec.IntValue MIN_AURA_FOR_ORE_SPAWN = BUILDER
+            .comment("The minimum environmental aura required for Powder of the Bountiful Core to function. (Default: 2,000,000)")
+            .defineInRange("minAuraForOreSpawn", 2000000, 0, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.IntValue MAX_ITERATION_FOR_ORE_SPAWN = BUILDER
+            .comment("Maximum number of ores the Powder of the Bountiful Core attempts to place per operation. (Default: 20)")
+            .defineInRange("maxIterationForOreSpawn", 20, 1, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.DoubleValue ORE_SPAWN_ITER_SCALE = BUILDER
+            .comment("Value of oreSpawnIterationCalcScale in the formula: AuraNearby / (AuraSpotsNearby * oreSpawnIterationCalcScale),\n to determine the number of ores the Powder of the Bountiful Core attempts to place per operation. (Default: 300,000)")
+            .defineInRange("oreSpawnIterationCalcScale", 300000D, 0D, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.DoubleValue ORE_SPAWN_RANGE_SCALE = BUILDER
+            .comment("Value of oreSpawnRangeScale in the formula: AuraNearby / oreSpawnRangeScale, to determine the range of the Powder of the Bountiful Core. (Default: 150,000)")
+            .defineInRange("oreSpawnRangeScale", 150000D, 1D, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.IntValue MIN_ORE_SPAWN_RANGE = BUILDER
+            .comment("Minimum radius for range of the of the Powder of the Bountiful Core. (Default: 5)")
+            .defineInRange("minOreSpawnRange", 5, 1, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.IntValue MAX_ORE_SPAWN_RANGE = BUILDER
+            .comment("Maximum radius for range of the of the Powder of the Bountiful Core. (Default: 20)")
+            .defineInRange("maxOreSpawnRange", 20, 1, Integer.MAX_VALUE);
+
+    public static final ForgeConfigSpec.IntValue MAX_ORE_PLACE_ATTEMPTS = BUILDER
+            .comment("Maximum attempts for the Powder of the Bountiful Core to place an ore, before failing and passing. (Default: 10)")
+            .defineInRange("maxOreSpawnRange", 10, 1, 100);
+
+
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
