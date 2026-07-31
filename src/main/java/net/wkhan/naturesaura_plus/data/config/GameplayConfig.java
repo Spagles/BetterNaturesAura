@@ -87,6 +87,13 @@ public class GameplayConfig {
             .comment("Maximum attempts for the Powder of the Bountiful Core to place an ore, before failing and passing. (Default: 10)")
             .defineInRange("maxOreSpawnRange", 10, 1, 100);
 
+    public static final ForgeConfigSpec.BooleanValue ENABLE_WHITELIST_AURA_BONEMEAL = BUILDER
+            .comment("Whether the tag #naturesaura_plus:aura_bonemeal_whitelist is checked before allowing environmental bone-mealing due aura excess.\nThe tag #naturesaura_plus:aura_bonemeal_blacklist, however, still takes precedence. (Default: false)")
+            .define("useAuraBoneMealWhiteList", false);
+
+    public static final ForgeConfigSpec.IntValue AURA_BONEMEAL_COST = BUILDER
+            .comment("The aura cost per environmental aura bonemeal effect occurrence. (Default: 3500)")
+            .defineInRange("auraBoneMealCost", 3500, 1, Integer.MAX_VALUE);
 
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();

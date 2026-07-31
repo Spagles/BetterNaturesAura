@@ -32,6 +32,7 @@
     "misc.BlastFurnaceBoosterMixin",
     "misc.OreSpawnEffectMixin",
     "misc.PetReviverEventsMixin",
+    "misc.PlantBoostEffectMixin",
     "misc.breakprevention.ItemStackMixin",
     "misc.breakprevention.LivingEntityMixin",
     "misc.breakprevention.PlayerMixin",
