@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.wkhan.naturesaura_plus.NaturesAuraPlus;
 import net.wkhan.naturesaura_plus.data.OreSpawnRule;
+import net.wkhan.naturesaura_plus.data.OreSpawnRules;
 import net.wkhan.naturesaura_plus.data.auragen.*;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static net.wkhan.naturesaura_plus.NaturesAuraPlusUtils.processRuleQueue;
 import static net.wkhan.naturesaura_plus.data.OreSpawnRules.*;
 import static net.wkhan.naturesaura_plus.data.auragen.AuraGenRules.addAuraGenerations;
 import static net.wkhan.naturesaura_plus.data.config.MiscConfig.SHOW_AURA_GEN_RULES_IN_LOG;
@@ -181,7 +183,7 @@ public class ReloadListener extends SimpleJsonResourceReloadListener {
             if (SHOW_AURA_GEN_RULES_IN_LOG.get())
                 LOGGER.info("Aura generation rules loaded: {}", loadedAuraRules);
 
-            addOreSpawns();
+            processRuleQueue(oreRulesQueue, OreSpawnRules::addOreSpawn);
             LOGGER.info("Number of ore spawn rules added: {}", ORE_SPAWNS.size());
             if (SHOW_ORE_SPAWN_RULES_IN_LOG.get())
                 LOGGER.info("Ore spawn rules loaded: {}", ORE_SPAWNS);

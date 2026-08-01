@@ -19,8 +19,9 @@ public record OreSpawnRule(
         ResourceKey<DimensionType> dimensionType,
         ResourceKey<Biome> biome,
         Map<Either<Block, TagKey<Block>>, Integer> baseBlockAndAuraDrain,
-        SimpleWeightedRandomList<Either<Block, TagKey<Block>>> outputOres
-) {
+        SimpleWeightedRandomList<Either<Block, TagKey<Block>>> outputOres,
+        int priority
+) implements PriorityRule {
     public static final Codec<OreSpawnRule> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     ResourceKey.codec(Registries.DIMENSION_TYPE).fieldOf("dimension").forGetter(OreSpawnRule::dimensionType),
@@ -28,7 +29,13 @@ public record OreSpawnRule(
                     Codec.unboundedMap(NaturesAuraPlusUtils.elementOrTagCodec(ForgeRegistries.BLOCKS, Registries.BLOCK), Codec.INT)
                             .fieldOf("base_block_to_aura_drain").forGetter(OreSpawnRule::baseBlockAndAuraDrain),
                     SimpleWeightedRandomList.wrappedCodecAllowingEmpty(NaturesAuraPlusUtils
-                            .elementOrTagCodec(ForgeRegistries.BLOCKS, Registries.BLOCK)).fieldOf("ores").forGetter(OreSpawnRule::outputOres)
+                            .elementOrTagCodec(ForgeRegistries.BLOCKS, Registries.BLOCK)).fieldOf("ores").forGetter(OreSpawnRule::outputOres),
+                    Codec.INT.optionalFieldOf("priority", 1).forGetter(OreSpawnRule::priority)
             ).apply(instance, OreSpawnRule::new)
     );
+
+    @Override
+    public int getPriority() {
+        return priority;
+    }
 }

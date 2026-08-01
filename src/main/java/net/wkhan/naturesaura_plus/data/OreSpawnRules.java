@@ -54,8 +54,4 @@ public final class OreSpawnRules {
             return new OreSpawnValues(newBaseBlockAndAuraDrain, newOutputOres.build());
         });
     }
-    public static void addOreSpawns() {
-        while (!oreRulesQueue.isEmpty()) addOreSpawn(oreRulesQueue.poll());
-    }
-
 }

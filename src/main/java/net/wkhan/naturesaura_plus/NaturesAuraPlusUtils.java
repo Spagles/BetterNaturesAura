@@ -28,12 +28,16 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.wkhan.naturesaura_plus.data.PriorityRule;
 import net.wkhan.naturesaura_plus.data.trackers.TreeRitualTreeTracker;
 import net.wkhan.naturesaura_plus.data.duckfaces.AbstractWoodStand;
 import net.wkhan.naturesaura_plus.data.duckfaces.MultiBlockUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -364,5 +368,22 @@ public class NaturesAuraPlusUtils {
                 }
             }
         }
+    }
+
+    public static <T> void processRuleQueue(Queue<T> ruleQueue, Consumer<T> addRule) {
+        while(!ruleQueue.isEmpty()) addRule.accept(ruleQueue.poll());
+    }
+
+    public static <K,V extends PriorityRule> void computeAgainstPriorty(HashMap<K,V> map, K key, V newValue,
+                                                                        @Nullable BiFunction<V,V,V> biFunction) {
+        map.merge(key, newValue, (oldValue, passedValue) -> {
+            if (passedValue.getPriority() < oldValue.getPriority())
+                return passedValue;
+            if (passedValue.getPriority() > oldValue.getPriority())
+                return oldValue;
+            if (biFunction == null)
+                return oldValue;
+            return biFunction.apply(oldValue, passedValue);
+        });
     }
 }
